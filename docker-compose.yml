@@ -1,2 +1,4 @@
-
-    
+services:
+  extractor:
+    build: .
+    tty: true
