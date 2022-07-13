@@ -7,9 +7,10 @@ load_dotenv()
 
 token = dotenv_values()["GITHUB_TOKEN"]
 
-
+print("\n----------------------------------------------------------------------------")
 print("----------------------------- Github Extractor -----------------------------")
-print("\n")
+print("----------------------------------------------------------------------------\n")
+
 
 print("Repository name and owner: \n")
 
@@ -17,16 +18,26 @@ print("Repository name and owner: \n")
 org = input("Organization: ")
 repo = input("Repository: ")
 
-print("\nDate range:")
-print("** Date format:  2020-04-02T19:43:43\n")
+print("\n----------------------------------------------------------------------------\n")
+
+print("Date range:\n")
+print("** Date format:  YYYY-MM-DD")
+print("** Time format:  hh-mm-ss\n")
 
 
 startDate = input("Start date: ")
+
+startTime = input("Start time: ")
+
 endDate = input("End date: ")
 
-print("\n Commits/PullRequests\n")
+endTime = input("End time: ")
 
-issueType = int(input("Would you like do extract:  Just issues (1) | just pull requests (2) | both (3)"))
+print("\n----------------------------------------------------------------------------\n")
+
+print("Commits and PullRequests\n")
+
+issueType = int(input("Would you like do extract:  Just issues (1) | just pull requests (2) | both (3)   "))
 
 pr = True
 issue = True
@@ -36,4 +47,17 @@ if(issueType == 1):
 if(issueType == 2):
   issue = False
 
-extractor.extract(token, org, repo, startDate, endDate, issue, pr)
+print("\n----------------------------------------------------------------------------\n")
+
+print("Logs \n")
+
+logInput = input("Enable logs? y / n:   ")
+
+log = True
+
+if(log == 'n' or log == 'N'):
+  log = False
+
+print("\n----------------------------------------------------------------------------\n")
+
+extractor.extract(token, org, repo, f'{startDate}T{startTime}', f'{endDate}T{endTime}', issue, pr, log)

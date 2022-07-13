@@ -8,7 +8,7 @@ import datetime
 from pprintpp import pprint
 
 
-def extract(token, owner, repo, startDate, endDate, issue=True, pr=True):
+def extract(token, owner, repo, startDate, endDate, issue=True, pr=True, log=True):
     headers = {
         'Accept': constants.ACCEPT_HEADER,
         'Authorization': f'token {token}'
@@ -30,6 +30,9 @@ def extract(token, owner, repo, startDate, endDate, issue=True, pr=True):
         totalPage = 10
     else:
         totalPage = math.ceil(totalCount / 100)
+    
+    if(log == True):
+        print(f'\nThere are {totalCount} items remaining!\n')
 
     for page in range(1, totalPage + 1):
         issues = requests.get(url=f'{constants.BASE_URL}/search/issues', headers=headers, params={
@@ -46,6 +49,8 @@ def extract(token, owner, repo, startDate, endDate, issue=True, pr=True):
             startDate = str(startDate).replace(' ', 'T')
 
         for item in issues['items']:
+            if(log == True):
+                print(f'Item number: {item["number"]}')
             with Issue() as i:
                 createdIssueId = i.create(
                     item["number"],
