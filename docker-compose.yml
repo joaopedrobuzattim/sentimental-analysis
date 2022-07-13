@@ -1,0 +1,14 @@
+services:
+  extractor:
+    build: .
+    tty: true
+  db: 
+    container_name: sentimental_analysis_pg
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: docker
+      PGDATA: /var/lib/postgresql/data
+    ports: 
+      - 5432:5432
