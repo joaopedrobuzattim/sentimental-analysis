@@ -1,10 +1,8 @@
-## Sentimental Analysys 
-
-<hr />
+<center> <h1> Sentimental Analysys </h1> </center> 
 
 Ressearch about the emotions on pandemic period... 
 
-<br />
+Readme in progress.
 
 
 
