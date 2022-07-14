@@ -1,6 +1,5 @@
 import src.scripts.extractor as extractor
 from dotenv import load_dotenv, dotenv_values
-from pprintpp import pprint
 
 load_dotenv()
 

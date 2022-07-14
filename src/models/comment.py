@@ -1,4 +1,3 @@
-import typing
 from ..config import db
 
 

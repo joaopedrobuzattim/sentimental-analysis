@@ -7,7 +7,7 @@ class Issue(db.Connection):
   
   def create(self, *args):
     try:
-      query = "INSERT INTO issues (issueNumber, issueId, userId, body, type, title, creationDate, updateDate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id"
+      query = "INSERT INTO issues (owner, repository, issueNumber, issueId, userId, body, type, title, creationDate, updateDate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id"
       result = self.query(query, args)
       return result[0]
     except Exception as e:

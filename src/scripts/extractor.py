@@ -53,6 +53,8 @@ def extract(token, owner, repo, startDate, endDate, issue=True, pr=True, log=Tru
                 print(f'Item number: {item["number"]}')
             with Issue() as i:
                 createdIssueId = i.create(
+                    owner,
+                    repo,
                     item["number"],
                     item["id"],
                     item["user"]["id"],
