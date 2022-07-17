@@ -1,4 +1,4 @@
-import src.scripts.extractor as extractor
+import scripts.issues.extract as issues
 from dotenv import load_dotenv, dotenv_values
 
 load_dotenv()
@@ -59,4 +59,4 @@ if(log == 'n' or log == 'N'):
 
 print("\n----------------------------------------------------------------------------\n")
 
-extractor.extract(token, org, repo, f'{startDate}T{startTime}', f'{endDate}T{endTime}', issue, pr, log)
+issues.extract(token, org, repo, f'{startDate}T{startTime}', f'{endDate}T{endTime}', issue, pr, log)

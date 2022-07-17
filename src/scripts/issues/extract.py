@@ -1,11 +1,10 @@
 import math
-from ..models.issue import Issue
-from ..models.comment import Comment
-from ..models.reaction import Reaction
-from ..utils import constants
+from ...data_access.issue import Issue
+from ...data_access.comment import Comment
+from ...data_access.reaction import Reaction
+from ...utils import constants
 import requests
 import datetime
-from pprintpp import pprint
 
 
 def extract(token, owner, repo, startDate, endDate, issue=True, pr=True, log=True):
