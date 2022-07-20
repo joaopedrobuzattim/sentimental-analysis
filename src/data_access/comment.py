@@ -9,8 +9,8 @@ class Comment(db.Connection):
     try:
       query = "INSERT INTO comments (commentId, userId ,issueId, body, creationDate, updateDate) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id"
       result = self.query(query, args)
-      return result[0]
+      return result[0][0]
     except Exception as e:
-      print("Insertion error: ", e)
+      print("Comment insertion error: ", e)
       exit(1) 
 

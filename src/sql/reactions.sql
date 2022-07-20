@@ -1,7 +1,7 @@
 create table if not exists reactions (
   id serial NOT NULL PRIMARY KEY,
-  issueId integer REFERENCES issues(id) ON DELETE cascade,
-  commentId integer REFERENCES comments(id) ON DELETE cascade,
+  issueId integer UNIQUE REFERENCES issues(id) ON DELETE cascade,
+  commentId integer UNIQUE REFERENCES comments(id) ON DELETE cascade,
   positive integer NOT null,
   negative integer NOT null,
   laugh integer NOT null,

@@ -1,5 +1,11 @@
-import src.scripts.extractor as extractor
+import inquirer
 from dotenv import load_dotenv, dotenv_values
+from src.scripts.issues.extract import extractIssues
+from src.scripts.most_forks_repositories.extract import extractMostForks
+from src.scripts.most_stars_repositories.extract import extractMostStars
+from src.scripts.most_help_wanted_issues_repositories.extract import extractMostHelpWantedIssues
+from src.scripts.main_repositories.extract import extractMain
+from src.data_access.main_repositories import MainRepositories
 
 load_dotenv()
 
@@ -11,52 +17,90 @@ print("----------------------------- Github Extractor --------------------------
 print("----------------------------------------------------------------------------\n")
 
 
-print("Repository name and owner: \n")
+questions = [
+  inquirer.List('scripts',
+                message="Extraction:",
+                choices=['Extract - repositories', 'Extract - issues'],
+            ),
+]
 
+answers = inquirer.prompt(questions)
 
-org = input("Organization: ")
-repo = input("Repository: ")
+if answers['scripts'] == 'Extract - repositories':
 
-print("\n----------------------------------------------------------------------------\n")
+  print("\nExtracting: most forks repositories \n")
+  extractMostForks(token)
 
-print("Date range:\n")
-print("** Date format:  YYYY-MM-DD")
-print("** Time format:  hh-mm-ss\n")
+  print("\nExtracting: most stars repositories \n")
+  extractMostStars(token)
 
+  print("\nExtracting: most help wanted issues repositories \n")
+  extractMostHelpWantedIssues(token)
 
-startDate = input("Start date: ")
+  print("\nExtracting: main repositories \n") 
+  extractMain()
 
-startTime = input("Start time: ")
+else:
+  print("\n----------------------------------------------------------------------------\n")
 
-endDate = input("End date: ")
+  print("Date range:\n")
+  print("** Date format:  YYYY-MM-DD")
+  print("** Time format:  hh:mm:ss\n")
 
-endTime = input("End time: ")
+  startDate = input("Start date: ")
 
-print("\n----------------------------------------------------------------------------\n")
+  startTime = input("Start time: ")
 
-print("Commits and PullRequests\n")
+  endDate = input("End date: ")
 
-issueType = int(input("Would you like do extract:  Just issues (1) | just pull requests (2) | both (3)   "))
+  endTime = input("End time: ")
 
-pr = True
-issue = True
+  print("\n----------------------------------------------------------------------------\n")
 
-if(issueType == 1):
-  pr = False
-if(issueType == 2):
-  issue = False
+  print("Commits and PullRequests\n")
 
-print("\n----------------------------------------------------------------------------\n")
+  questions = [
+  inquirer.List('issueType',
+                message="Would you like do extract:",
+                choices=['Just issues', 'Just pull requests', 'Both'],
+            ),
+  ]
 
-print("Logs \n")
+  answers = inquirer.prompt(questions)
 
-logInput = input("Enable logs? y / n:   ")
+  pr = True
+  issue = True
 
-log = True
+  if(answers["issueType"] == 'Just issues'):
+    pr = False
+  if(answers["issueType"] == 'Just pull requests'):
+    issue = False
 
-if(log == 'n' or log == 'N'):
-  log = False
+  print("\n----------------------------------------------------------------------------\n")
 
-print("\n----------------------------------------------------------------------------\n")
+  print("Logs \n")
 
-extractor.extract(token, org, repo, f'{startDate}T{startTime}', f'{endDate}T{endTime}', issue, pr, log)
+  questions = [
+  inquirer.List('logs',
+                message="Enable logs?",
+                choices=['Yes', 'No'],
+            ),
+  ]
+  
+  answers = inquirer.prompt(questions)
+  
+  log = True
+
+  if(answers["logs"] == 'No'):
+    log = False
+
+  print("\n----------------------------------------------------------------------------\n")
+
+  with MainRepositories() as main:
+    repos = main.list()
+
+  for repo in repos:
+    print("\n----------------------------------------------------------------------------\n")
+    print(f'Extracting issue with id: {repo[0]}')
+    print("\n----------------------------------------------------------------------------\n")
+    extractIssues(token, repo[1], repo[2], repo[0],f'{startDate}T{startTime}', f'{endDate}T{endTime}', issue, pr, log)

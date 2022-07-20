@@ -9,7 +9,7 @@ class Reaction(db.Connection):
     try:
       query = "INSERT INTO reactions (issueId, commentId, positive, negative, laugh, hooray, confused, heart, rocket, eyes) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id"
       result = self.query(query, args)
-      return result[0]
+      return result[0][0]
     except Exception as e:
-      print("Insertion error: ", e)
+      print("Reaction insertion error: ", e)
       exit(1) 

@@ -48,10 +48,14 @@ try:
 
   cur = conn.cursor()
 
+  cur.execute(open(os.path.join(sys.path[0],'main_repositories.sql'), 'r').read())
   cur.execute(open(os.path.join(sys.path[0],'issues.sql'), 'r').read())
   cur.execute(open(os.path.join(sys.path[0],'comments.sql'), 'r').read())
   cur.execute(open(os.path.join(sys.path[0],'reactions.sql'), 'r').read())
-  
+  cur.execute(open(os.path.join(sys.path[0],'most_help_wanted_issues_repositories.sql'), 'r').read())
+  cur.execute(open(os.path.join(sys.path[0],'most_forks_repositories.sql'), 'r').read())
+  cur.execute(open(os.path.join(sys.path[0],'most_stars_repositories.sql'), 'r').read())
+
   conn.close()
 
 
