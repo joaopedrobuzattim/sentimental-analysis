@@ -2,12 +2,11 @@ import math
 from ...data_access.issue import Issue
 from ...data_access.comment import Comment
 from ...data_access.reaction import Reaction
-from ...utils import constants
-import requests
+from ...utils import constants, functions
 import datetime
 
 
-def extract(token, owner, repo, startDate, endDate, issue=True, pr=True, log=True):
+def extractIssues(token, owner, repo, repositoryId, startDate, endDate, issue=True, pr=True, log=True):
     headers = {
         'Accept': constants.ACCEPT_HEADER,
         'Authorization': f'token {token}'
@@ -19,7 +18,7 @@ def extract(token, owner, repo, startDate, endDate, issue=True, pr=True, log=Tru
     if not pr and issue:
         isArg = 'is:issue'
 
-    totalCount = requests.get(url=f'{constants.BASE_URL}/search/issues', headers=headers, params={
+    totalCount = functions.getUrl(f'{constants.BASE_URL}/search/issues',headers, params={
         'q': f'repo:{owner}/{repo} created:{startDate}..{endDate}'
     }).json()['total_count']
     
@@ -34,12 +33,12 @@ def extract(token, owner, repo, startDate, endDate, issue=True, pr=True, log=Tru
         print(f'\nThere are {totalCount} items remaining!\n')
 
     for page in range(1, totalPage + 1):
-        issues = requests.get(url=f'{constants.BASE_URL}/search/issues', headers=headers, params={
+        issues = functions.getUrl(f'{constants.BASE_URL}/search/issues', headers, params = {
             'sort': 'created',
             'order': 'asc',
             'per_page': 100,
             'page': page,
-            'q': f'repo:{owner}/{repo} {isArg} created:{startDate}..{endDate}'
+            'q': f'repo:{owner}/{repo} {isArg} created:{startDate}..{endDate}'    
         }).json()
 
         if page == totalPage:
@@ -52,12 +51,11 @@ def extract(token, owner, repo, startDate, endDate, issue=True, pr=True, log=Tru
                 print(f'Item number: {item["number"]}')
             with Issue() as i:
                 createdIssueId = i.create(
-                    owner,
-                    repo,
+                    repositoryId,
                     item["number"],
                     item["id"],
                     item["user"]["id"],
-                    item["body"],
+                    item["body"].replace("\x00", "\uFFFD") if item["body"] != None else item["body"],
                     "pull_request" if "pull_request" in item else "issue",
                     item["title"],
                     item["created_at"].replace('Z', ''),
@@ -77,13 +75,16 @@ def extract(token, owner, repo, startDate, endDate, issue=True, pr=True, log=Tru
                     item["reactions"]["eyes"],
                 )
 
-
+            
             commentsUrl = f'{constants.BASE_URL}/repos/{owner}/{repo}/issues/{item["number"]}/comments'
-            issueComments = requests.get(url=commentsUrl, headers=headers, params={
+            issueComments = functions.getUrl(commentsUrl, headers, params = {
                 'sort': 'created',
-                'order': 'asc'}).json()
+                'order': 'asc'
+            }).json()
 
             for comment in issueComments:
+                if(log == True):
+                    print(f'\tComment id: {comment["id"]}')
                 if comment["user"]["type"] != 'Bot' and ( 
                     datetime.datetime.fromisoformat(comment['created_at'].replace('Z', '')) <= datetime.datetime.fromisoformat(endDate)  and
                     datetime.datetime.fromisoformat(comment['updated_at'].replace('Z', '')) <= datetime.datetime.fromisoformat(endDate)
@@ -93,7 +94,7 @@ def extract(token, owner, repo, startDate, endDate, issue=True, pr=True, log=Tru
                             comment["id"],
                             comment["user"]["id"],
                             createdIssueId,
-                            comment["body"],
+                            comment["body"].replace("\x00", "\uFFFD"),
                             comment["created_at"].replace('Z', ''),
                             item["updated_at"].replace('Z', ''),
                         )
@@ -113,4 +114,4 @@ def extract(token, owner, repo, startDate, endDate, issue=True, pr=True, log=Tru
 
     if totalCount <= 1000:
         return
-    extract(token, owner, repo, startDate=startDate, endDate=endDate, issue=issue, pr=pr)
+    extractIssues(token, owner, repo, repositoryId,startDate=startDate, endDate=endDate, issue=issue, pr=pr)

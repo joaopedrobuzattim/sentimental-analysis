@@ -1,7 +1,6 @@
 CREATE table if not exists issues (
   id serial NOT NULL PRIMARY KEY,
-  owner varchar(50) NOT NULL,
-  repository varchar(50) NOT NULL,
+  repositoryId integer NOT NULL REFERENCES main_repositories(id),
   issueNumber integer NOT NULL,
   issueId integer NOT null,
   userId integer NOT NULL,

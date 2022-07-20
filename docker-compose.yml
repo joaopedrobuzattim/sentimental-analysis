@@ -3,12 +3,12 @@ services:
     build: .
     tty: true
   db: 
-    container_name: sentimental_analysis_pg
+    container_name: github_data_pg
     image: postgres
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: docker
+      POSTGRES_USER: $PG_USERNAME
+      POSTGRES_PASSWORD: $PG_PASSWORD
       PGDATA: /var/lib/postgresql/data
     ports: 
-      - 5432:5432
+      - $PG_PORT:$PG_PORT

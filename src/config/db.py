@@ -45,4 +45,4 @@ class Connection():
   
   def query(self, sql, params=()):
     self.cursor.execute(sql, params)
-    return self.fetchOne()
+    return self.fetchAll()
