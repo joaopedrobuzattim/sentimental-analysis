@@ -14,7 +14,7 @@ def extractMostForks(token):
       "sort": "forks",
       "per_page": 100,
       "page": i,
-      "q": f'created:<=2019-01-01 stars:>=10000'
+      "q": f'created:<=2018-01-01 stars:>=10000'
     }).json()
 
     print(f"{11 - i} pages remaining!\n")
